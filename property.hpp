@@ -90,22 +90,22 @@ class Property {
         }
       }
 
-      state outsideLimits(bool print_message) {
-        T conservativeLowerLimit = lowerLimit - tolerance;
-        T conservativeUpperLimit = upperLimit + tolerance;
-        if(testVariable <= conservativeLowerLimit || testVariable >= conservativeUpperLimit)
-          return NORMAL;
-        else if(testVariable > conservativeLowerLimit) {
-          state fproperty_state = (testVariable <= lowerLimit) ? LOW_LIMIT_WARNING : LOW_LIMIT_BREACH;
-          if(print_message) printMessage(fproperty_state);
-          return fproperty_state;
-        }
-        else {
-          state fproperty_state = (testVariable >= upperLimit) ? HIGH_LIMIT_WARNING : HIGH_LIMIT_BREACH;
-          if(print_message) printMessage(fproperty_state);
-          return fproperty_state;
-        }
-      }
+      // state outsideLimits(bool print_message) {
+      //   T conservativeLowerLimit = lowerLimit - tolerance;
+      //   T conservativeUpperLimit = upperLimit + tolerance;
+      //   if(testVariable <= conservativeLowerLimit || testVariable >= conservativeUpperLimit)
+      //     return NORMAL;
+      //   else if(testVariable > conservativeLowerLimit) {
+      //     state fproperty_state = (testVariable <= lowerLimit) ? LOW_LIMIT_WARNING : LOW_LIMIT_BREACH;
+      //     if(print_message) printMessage(fproperty_state);
+      //     return fproperty_state;
+      //   }
+      //   else {
+      //     state fproperty_state = (testVariable >= upperLimit) ? HIGH_LIMIT_WARNING : HIGH_LIMIT_BREACH;
+      //     if(print_message) printMessage(fproperty_state);
+      //     return fproperty_state;
+      //   }
+      // }
 
       state outsideUpperLimit(bool print_message) {
         T conservativeUpperLimit = upperLimit - tolerance;
@@ -134,8 +134,8 @@ class Property {
           switch(limitType) {
             case DUAL_INSIDE:
               return withinLimits(print_message);
-            case DUAL_OUTSIDE:
-              return outsideLimits(print_message);
+            // case DUAL_OUTSIDE:
+            //   return outsideLimits(print_message);
             case UPPER:
               return outsideUpperLimit(print_message);
             case LOWER:
