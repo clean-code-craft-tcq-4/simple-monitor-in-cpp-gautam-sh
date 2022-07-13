@@ -1,7 +1,10 @@
 #include "checker.hpp"
 
+std::string printLanguage = "GERMAN";
+
 int main() {
     size_t testSize = 7;
+
 
     std::vector<float> test_temperature(0, testSize);
     std::vector<float> test_soc(0, testSize);

@@ -1,5 +1,7 @@
 #include <optional>
 
+extern std::string printLanguage;
+
 template <class T>
 class Property {
   public:
@@ -41,19 +43,36 @@ class Property {
 
     private:
       void printMessage(state property_state) {
+            
+        std::string outsideLimitMsg;
+        std::string lowerLimitWarning;
+        std::string upperLimitWarning;
+        
+        if(printLanguage == "GERMAN") {
+            outsideLimitMsg = " Außerhalb der Grenzen";
+            lowerLimitWarning = " ACHTUNG: Annäherung an die untere Grenze für ";
+            upperLimitWarning = " ACHTUNG: Annäherung an die Obergrenze für ";    
+        }
+        else {
+            outsideLimitMsg = " Outside the limits";
+            lowerLimitWarning = " WARNING: Approaching the lower limit for ";
+            upperLimitWarning = " WARNING: Approaching the upper limit for ";
+        }
+
         if(property_state == HIGH_LIMIT_BREACH || property_state == LOW_LIMIT_BREACH) {
-          std::cout << this->propertyName << " = " << this->testVariable << ": Outside the limits!\n";
+          std::cout << this->propertyName << " = " << this->testVariable << outsideLimitMsg << "!\n";
           return;
         }
         else if(property_state == HIGH_LIMIT_WARNING) {
-          std::cout << this->propertyName << " = " << this->testVariable << ": WARNING: " << this->propertyName << " approaching the upper limit!\n";
+          std::cout << this->propertyName << " = " << this->testVariable << upperLimitWarning << this->propertyName << "!\n";
           return;
         }
         else if(property_state == LOW_LIMIT_WARNING) {
-          std::cout << this->propertyName << " = " << this->testVariable << ": WARNING: " << this->propertyName << " approaching the lower limit!\n";
+          std::cout << this->propertyName << " = " << this->testVariable  << lowerLimitWarning << this->propertyName << "!\n";
           return;
         }
       }
+
       state withinLimits(bool print_message) {
         T conservativeLowerLimit = lowerLimit + tolerance;
         T conservativeUpperLimit = upperLimit - tolerance;
@@ -124,54 +143,3 @@ class Property {
           }
         }
 };
-
-// class CheckerFunction {
-   
-//   private:
-//     bool temperatureInRange() {
-//     if(temperature < 0 || temperature > 45) {
-//       std::cout << "Temperature out of range!\n";
-//       return false;
-//     }
-//     return true;
-//   }
-
-//     bool chargeInRange() {
-//     if(soc < 20 || soc > 80) {
-//       std::cout << "State of Charge out of range!\n";
-//       return false;
-//     }
-//     return true;
-//   }
-
-//     bool chargeRateInRange() {
-//     if(chargeRate > 0.8) {
-//       std::cout << "Charge Rate out of range!\n";
-//       return false;
-//     }
-//     return true;
-//   }
-  
-//   public:
-//     float temperature, soc, chargeRate;
-//     std::vector<bool(CheckerFunction::*)()> testFunction;
-
-//     CheckerFunction(){
-//         testFunction = {&CheckerFunction::temperatureInRange, &CheckerFunction::chargeInRange, &CheckerFunction::chargeRateInRange};
-//     };
-
-//     CheckerFunction(float ftemperature, float fsoc, float fchargeRate) : temperature(ftemperature), soc(fsoc), chargeRate(fchargeRate) {
-//       testFunction = {&CheckerFunction::temperatureInRange, &CheckerFunction::chargeInRange, &CheckerFunction::chargeRateInRange};
-//     };
-// };
-
-// bool batteryIsOk(CheckerFunction& test) {
-//   bool result = true;
-//   auto it = test.testFunction.begin();
-//   while(result && it != test.testFunction.end())
-//   {
-//     result = (test.*(*it))();
-//     ++it;
-//   }
-//   return result;
-// }
