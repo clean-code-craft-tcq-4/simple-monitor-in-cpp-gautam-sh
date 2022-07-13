@@ -1,4 +1,4 @@
-#include <optional>
+#include "printMessage.hpp"
 
 extern std::string printLanguage;
 
@@ -42,22 +42,25 @@ class Property {
         }
 
     private:
+ 
       void printMessage(state property_state) {
-            
+
+        printPhrase();
+        
         std::string outsideLimitMsg;
         std::string lowerLimitWarning;
         std::string upperLimitWarning;
         
-        if(printLanguage == "GERMAN") {
-            outsideLimitMsg = " Außerhalb der Grenzen";
-            lowerLimitWarning = " ACHTUNG: Annäherung an die untere Grenze für ";
-            upperLimitWarning = " ACHTUNG: Annäherung an die Obergrenze für ";    
-        }
-        else {
-            outsideLimitMsg = " Outside the limits";
-            lowerLimitWarning = " WARNING: Approaching the lower limit for ";
-            upperLimitWarning = " WARNING: Approaching the upper limit for ";
-        }
+        // if(printLanguage == "GERMAN") {
+        //     outsideLimitMsg = " Außerhalb der Grenzen";
+        //     lowerLimitWarning = " ACHTUNG: Annäherung an die untere Grenze für ";
+        //     upperLimitWarning = " ACHTUNG: Annäherung an die Obergrenze für ";    
+        // }
+        // else {
+        //     outsideLimitMsg = " Outside the limits";
+        //     lowerLimitWarning = " WARNING: Approaching the lower limit for ";
+        //     upperLimitWarning = " WARNING: Approaching the upper limit for ";
+        // }
 
         if(property_state == HIGH_LIMIT_BREACH || property_state == LOW_LIMIT_BREACH) {
           std::cout << this->propertyName << " = " << this->testVariable << outsideLimitMsg << "!\n";
