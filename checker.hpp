@@ -1,54 +1,26 @@
 #include <assert.h>
 #include <iostream>
 #include <vector>
+#include "property.hpp"
 
-class CheckerFunction {
-   
-  private:
-    bool temperatureInRange() {
-    if(temperature < 0 || temperature > 45) {
-      std::cout << "Temperature out of range!\n";
-      return false;
-    }
-    return true;
-  }
+class BatteryChecker {
+    public:
 
-    bool chargeInRange() {
-    if(soc < 20 || soc > 80) {
-      std::cout << "State of Charge out of range!\n";
-      return false;
-    }
-    return true;
-  }
+        std::vector<Property<float>> battery_properties;
 
-    bool chargeRateInRange() {
-    if(chargeRate > 0.8) {
-      std::cout << "Charge Rate out of range!\n";
-      return false;
-    }
-    return true;
-  }
-  
-  public:
-    float temperature, soc, chargeRate;
-    std::vector<bool(CheckerFunction::*)()> testFunction;
+        BatteryChecker();
 
-    CheckerFunction(){
-        testFunction = {&CheckerFunction::temperatureInRange, &CheckerFunction::chargeInRange, &CheckerFunction::chargeRateInRange};
-    };
+        BatteryChecker(std::vector<Property<float>> &properties)
+            : battery_properties(properties) {
+            };
 
-    CheckerFunction(float ftemperature, float fsoc, float fchargeRate) : temperature(ftemperature), soc(fsoc), chargeRate(fchargeRate) {
-      testFunction = {&CheckerFunction::temperatureInRange, &CheckerFunction::chargeInRange, &CheckerFunction::chargeRateInRange};
-    };
+        bool batteryIsOk(bool printMessage = false) {
+            for(auto it : battery_properties) {
+                Property<float>::state property_state = it.propertyIsOk(printMessage);
+                if(property_state == it.HIGH_LIMIT_BREACH || property_state == it.LOW_LIMIT_BREACH)
+                    return false;
+            }
+            return true;
+        }
+
 };
-
-bool batteryIsOk(CheckerFunction& test) {
-  bool result = true;
-  auto it = test.testFunction.begin();
-  while(result && it != test.testFunction.end())
-  {
-    result = (test.*(*it))();
-    ++it;
-  }
-  return result;
-}
