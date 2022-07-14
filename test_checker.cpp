@@ -15,7 +15,6 @@ int main() {
     test_charge_rate = {-3, 0.35, 0.8, 0.84, 0.945, 1.0, 20.3};
 
     std::vector<bool> expected_result = {false, false, true, true, true, true, false};
-    // std::vector<bool> expected_result = {false, true, true, true, true, true, false};
 
     for(size_t i = 0; i < testSize; ++i) {
         Property<float> temperature("Temperature", test_temperature[i], 45, 0, 5, true);

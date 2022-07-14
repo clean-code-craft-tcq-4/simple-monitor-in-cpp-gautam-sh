@@ -95,13 +95,6 @@ class Property {
 
       state outsideUpperLimit(bool print_message) {
         T conservativeUpperLimit = upperLimit - tolerance;
-        // if(testVariable <= conservativeUpperLimit)
-        //   return NORMAL;
-        // else {
-        //   state fproperty_state = (testVariable >= upperLimit) ? HIGH_LIMIT_BREACH : HIGH_LIMIT_WARNING;
-        //   if(print_message) printMessage(fproperty_state);
-        //   return fproperty_state;
-        // }
 
         std::vector<T> boundary = {conservativeUpperLimit, upperLimit};
         auto it = std::upper_bound(boundary.cbegin(), boundary.cend(), testVariable);
@@ -114,17 +107,9 @@ class Property {
 
       state outsideLowerLimit(bool print_message) {
         T conservativeLowerLimit = lowerLimit + tolerance;
-        // if(testVariable >= conservativeLowerLimit)
-        //   return NORMAL;
-        // else {
-        //   state fproperty_state = (testVariable <= lowerLimit)  ? LOW_LIMIT_BREACH : LOW_LIMIT_WARNING;
-        //   if(print_message) printMessage(fproperty_state);
-        //   return fproperty_state;
-        // }
 
         std::vector<T> boundary = {lowerLimit, conservativeLowerLimit};
         auto it = std::upper_bound(boundary.cbegin(), boundary.cend(), testVariable);
-        // if(testVariable == upperLimit) --it;
         
         state possible_state;
         if(print_message) printMessage(state(it - boundary.cbegin()));
