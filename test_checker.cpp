@@ -12,7 +12,7 @@ int main() {
 
     test_temperature = {-2, 0, 2.25, 25, 42.75, 45, 60};
     test_soc = {-5, 20, 24, 70, 76, 80, 100};
-    test_charge_rate = {-3, 0.35, 0.855, 0.9, 0.945, 1.0};
+    test_charge_rate = {-3, 0.35, 0.8, 0.84, 0.945, 1.0, 20.3};
 
     std::vector<bool> expected_result = {false, false, true, true, true, true, false};
     // std::vector<bool> expected_result = {false, true, true, true, true, true, false};
