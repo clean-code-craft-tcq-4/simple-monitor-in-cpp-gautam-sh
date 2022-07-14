@@ -16,8 +16,8 @@ class BatteryChecker {
 
         bool batteryIsOk(bool printMessage = false) {
             for(auto it : battery_properties) {
-                Property<float>::state property_state = it.propertyIsOk(printMessage);
-                if(property_state == it.HIGH_LIMIT_BREACH || property_state == it.LOW_LIMIT_BREACH)
+                BaseProperty<float>::state property_state = it.propertyIsOk(printMessage);
+                if(property_state == it.baseProperty.HIGH_LIMIT_BREACH || property_state == it.baseProperty.LOW_LIMIT_BREACH)
                     return false;
             }
             return true;

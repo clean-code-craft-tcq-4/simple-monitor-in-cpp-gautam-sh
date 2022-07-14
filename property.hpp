@@ -1,79 +1,78 @@
 #include "printMessage.hpp"
+#include "base_property.hpp"
 #include <vector>
 #include <algorithm>
 
 extern std::string printLanguage;
 
 template <class T>
-class Property {
+class Property{
   public:
-    enum limit_type {DUAL_INSIDE, DUAL_OUTSIDE, UPPER, LOWER};
+    // enum limit_type {DUAL_INSIDE, DUAL_OUTSIDE, UPPER, LOWER};
     
-    enum state {LOW_LIMIT_BREACH, LOW_LIMIT_WARNING,
-      NORMAL, HIGH_LIMIT_WARNING, HIGH_LIMIT_BREACH};
+    // enum state {LOW_LIMIT_BREACH, LOW_LIMIT_WARNING,
+    //   NORMAL, HIGH_LIMIT_WARNING, HIGH_LIMIT_BREACH};
 
     T testVariable;
-    T upperLimit;
-    T lowerLimit;
-    T tolerance;
-    float tolerancePercent;
-    limit_type limitType;
-    std::string propertyName;
+    BaseProperty<T> baseProperty;
+    // limit_type limitType = DUAL_INSIDE;
+    // std::string propertyName;
 
     Property() = delete;
 
-    Property(std::string fproperty_name, T ftest_variable, T fupper_limit, T flower_limit, float ftolerance, bool fsafe_inside)
-      : propertyName(fproperty_name), testVariable(ftest_variable), tolerancePercent(ftolerance),
-        upperLimit(fupper_limit), lowerLimit(flower_limit) {
-          tolerance = upperLimit * tolerancePercent/100.;
-          if(fsafe_inside) limitType = DUAL_INSIDE;
-          else limitType = DUAL_OUTSIDE;
-        }
+    Property(T ftest_variable, BaseProperty<T> fbase_property)
+      : testVariable(ftest_variable), baseProperty(fbase_property){}
 
-    Property(std::string fproperty_name, T ftest_variable, T flimit, float ftolerance, bool fis_upper)
-      : propertyName(fproperty_name), testVariable(ftest_variable), tolerancePercent(ftolerance) {
-          tolerance = flimit * tolerancePercent/100.;
-          if(fis_upper) {
-            limitType = UPPER;
-            upperLimit = flimit;
-          }
-          else {
-            limitType = LOWER;
-            lowerLimit = flimit;
-          }
-        }
+    // Property(std::string fproperty_name, T ftest_variable, T flimit, float ftolerance, bool fis_upper)
+    //   : propertyName(fproperty_name), testVariable(ftest_variable), tolerancePercent(ftolerance) {
+    //       tolerance = flimit * tolerancePercent/100.;
+    //       if(fis_upper) {
+    //         limitType = UPPER;
+    //         upperLimit = flimit;
+    //       }
+    //       else {
+    //         limitType = LOWER;
+    //         lowerLimit = flimit;
+    //       }
+    //     }
 
+      
     private:
+
+    // T upperLimit;
+    // T lowerLimit;
+    // T tolerance;
+    // float tolerancePercent;
  
-      void printMessage(state property_state) {
+      void printMessage(BaseProperty<float>::state property_state) {
 
         printPhrase();
 
-        if(property_state == HIGH_LIMIT_BREACH || property_state == LOW_LIMIT_BREACH) {
-          std::cout << this->propertyName << " = " << this->testVariable << outsideLimitMsg << "!\n";
+        if(property_state == BaseProperty<float>::HIGH_LIMIT_BREACH || property_state == BaseProperty<float>::LOW_LIMIT_BREACH) {
+          std::cout << this->baseProperty.propertyName << " = " << this->testVariable << outsideLimitMsg << "!\n";
           return;
         }
-        else if(property_state == HIGH_LIMIT_WARNING) {
-          std::cout << this->propertyName << " = " << this->testVariable << upperLimitWarning << this->propertyName << "!\n";
+        else if(property_state == BaseProperty<float>::HIGH_LIMIT_WARNING) {
+          std::cout << this->baseProperty.propertyName << " = " << this->testVariable << upperLimitWarning << this->baseProperty.propertyName << "!\n";
           return;
         }
-        else if(property_state == LOW_LIMIT_WARNING) {
-          std::cout << this->propertyName << " = " << this->testVariable  << lowerLimitWarning << this->propertyName << "!\n";
+        else if(property_state == BaseProperty<float>::LOW_LIMIT_WARNING) {
+          std::cout << this->baseProperty.propertyName << " = " << this->testVariable  << lowerLimitWarning << this->baseProperty.propertyName << "!\n";
           return;
         }
       }
 
-      state withinLimits(bool print_message) {
-        T conservativeLowerLimit = lowerLimit + tolerance;
-        T conservativeUpperLimit = upperLimit - tolerance;
+      BaseProperty<float>::state withinLimits(bool print_message) {
+        T conservativeLowerLimit = baseProperty.lowerLimit + baseProperty.tolerance;
+        T conservativeUpperLimit = baseProperty.upperLimit - baseProperty.tolerance;
         
-        std::vector<T> boundary = {lowerLimit, conservativeLowerLimit, conservativeUpperLimit, upperLimit};
+        std::vector<T> boundary = {baseProperty.lowerLimit, conservativeLowerLimit, conservativeUpperLimit, baseProperty.upperLimit};
         auto it = std::upper_bound(boundary.cbegin(), boundary.cend(), testVariable);
-        if(testVariable == upperLimit) --it;
+        if(testVariable == baseProperty.upperLimit) --it;
         
-        state possible_state;
-        if(print_message) printMessage(state(it - boundary.cbegin()));
-        return state(it - boundary.cbegin());
+        BaseProperty<float>::state possible_state;
+        if(print_message) printMessage(BaseProperty<float>::state(it - boundary.cbegin()));
+        return BaseProperty<float>::state(it - boundary.cbegin());
       }
 
       // state outsideLimits(bool print_message) {
@@ -93,39 +92,39 @@ class Property {
       //   }
       // }
 
-      state outsideUpperLimit(bool print_message) {
-        T conservativeUpperLimit = upperLimit - tolerance;
+      BaseProperty<float>::state outsideUpperLimit(bool print_message) {
+        T conservativeUpperLimit = baseProperty.upperLimit - baseProperty.tolerance;
 
-        std::vector<T> boundary = {conservativeUpperLimit, upperLimit};
+        std::vector<T> boundary = {conservativeUpperLimit, baseProperty.upperLimit};
         auto it = std::upper_bound(boundary.cbegin(), boundary.cend(), testVariable);
-        if(testVariable == upperLimit) --it;
+        if(testVariable == baseProperty.upperLimit) --it;
         
-        state possible_state;
-        if(print_message) printMessage(state(it - boundary.cbegin()));
-        return state(it - boundary.cbegin());
+      BaseProperty<float>::state possible_state;
+        if(print_message) printMessage(BaseProperty<float>::state(it - boundary.cbegin()));
+        return BaseProperty<float>::state(it - boundary.cbegin());
       }
 
-      state outsideLowerLimit(bool print_message) {
-        T conservativeLowerLimit = lowerLimit + tolerance;
+      BaseProperty<float>::state outsideLowerLimit(bool print_message) {
+        T conservativeLowerLimit = baseProperty.lowerLimit + baseProperty.tolerance;
 
-        std::vector<T> boundary = {lowerLimit, conservativeLowerLimit};
+        std::vector<T> boundary = {baseProperty.lowerLimit, conservativeLowerLimit};
         auto it = std::upper_bound(boundary.cbegin(), boundary.cend(), testVariable);
         
-        state possible_state;
-        if(print_message) printMessage(state(it - boundary.cbegin()));
-        return state(it - boundary.cbegin());
+        BaseProperty<float>::state possible_state;
+        if(print_message) printMessage(BaseProperty<float>::state(it - boundary.cbegin()));
+        return BaseProperty<float>::state(it - boundary.cbegin());
       }
 
       public:
-        state propertyIsOk(bool print_message = false) {
-          switch(limitType) {
-            case DUAL_INSIDE:
+        BaseProperty<float>::state propertyIsOk(bool print_message = false) {
+          switch(baseProperty.limitType) {
+            case BaseProperty<float>::DUAL_INSIDE:
               return withinLimits(print_message);
             // case DUAL_OUTSIDE:
             //   return outsideLimits(print_message);
-            case UPPER:
+            case BaseProperty<float>::UPPER:
               return outsideUpperLimit(print_message);
-            case LOWER:
+            case BaseProperty<float>::LOWER:
               return outsideLowerLimit(print_message);
           }
         }

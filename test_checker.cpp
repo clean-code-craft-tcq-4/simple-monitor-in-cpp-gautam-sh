@@ -16,10 +16,22 @@ int main() {
 
     std::vector<bool> expected_result = {false, false, true, true, true, true, false};
 
+    BaseProperty<float> temperatureObj;
+    temperatureObj.isDualLimit(0, 45);
+    temperatureObj.setTolerancePercent(5);
+
+    BaseProperty<float> socObj;
+    socObj.isDualLimit(20, 80);
+    socObj.setTolerancePercent(5);
+
+    BaseProperty<float> chargeRateObj;
+    chargeRateObj.isStrictLowerLimit(0.8);
+    chargeRateObj.setTolerancePercent(5);
+
     for(size_t i = 0; i < testSize; ++i) {
-        Property<float> temperature("Temperature", test_temperature[i], 45, 0, 5, true);
-        Property<float> soc("SoC", test_soc[i], 80, 20, 5, true);
-        Property<float> chargeRate("ChargeRate", test_charge_rate[i], 0.8, 5, false);
+        Property<float> temperature(test_temperature[i], temperatureObj);
+        Property<float> soc(test_soc[i], socObj);
+        Property<float> chargeRate(test_charge_rate[i], chargeRateObj);
         
         std::vector<Property<float>> test_properties = {temperature, soc, chargeRate};
         BatteryChecker test_battery(test_properties);
