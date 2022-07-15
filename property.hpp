@@ -1,6 +1,9 @@
 #include "printMessage.hpp"
 #include <vector>
+#include <map>
 #include <algorithm>
+#include <iostream>
+#include <string_view>
 
 extern std::string printLanguage;
 
@@ -15,10 +18,23 @@ class Property {
     T testVariable;
     T upperLimit;
     T lowerLimit;
-    T tolerance;
+    T tolerance = upperLimit * tolerancePercent/100.;
     float tolerancePercent;
     limit_type limitType = DUAL_INSIDE;
     std::string propertyName;
+
+    // struct PrintMap : std::map<unsigned int, std::string> {
+    //       PrintMap() {
+    //         this->operator[](HIGH_LIMIT_BREACH) = outsideLimitMsg;
+    //         this->operator[](HIGH_LIMIT_WARNING) = upperLimitWarning;
+    //         this->operator[](NORMAL) = "Normal for ";
+    //         this->operator[](LOW_LIMIT_WARNING) = lowerLimitWarning;
+    //         this->operator[](LOW_LIMIT_BREACH) = outsideLimitMsg;
+    //       };
+    //       ~PrintMap(){};
+    // } printBook;
+
+    std::vector<std::string> print_book = {outsideLimitMsg, lowerLimitWarning, normalMsg, upperLimitWarning, outsideLimitMsg};
 
     Property();
 
@@ -74,19 +90,50 @@ class Property {
 
         printPhrase();
 
-        if(property_state == HIGH_LIMIT_BREACH || property_state == LOW_LIMIT_BREACH) {
-          std::cout << this->propertyName << " = " << this->testVariable << outsideLimitMsg << "!\n";
-          return;
-        }
-        else if(property_state == HIGH_LIMIT_WARNING) {
-          std::cout << this->propertyName << " = " << this->testVariable << upperLimitWarning << this->propertyName << "!\n";
-          return;
-        }
-        else if(property_state == LOW_LIMIT_WARNING) {
-          std::cout << this->propertyName << " = " << this->testVariable  << lowerLimitWarning << this->propertyName << "!\n";
-          return;
-        }
+        // constexpr std::string_view printList[] = {
+        //   [HIGH_LIMIT_BREACH] = outsideLimitMsg,
+        //   [HIGH_LIMIT_WARNING] = upperLimitWarning,
+        //   [LOW_LIMIT_WARNING] = lowerLimitWarning,
+        //   [LOW_LIMIT_BREACH] = outsideLimitMsg
+        // }
+
+        // class PrintMap : std::map<unsigned int, std::string> {
+        //   PrintMap() {
+        //     this->operator[](HIGH_LIMIT_BREACH) = outsideLimitMsg;
+        //     this->operator[](HIGH_LIMIT_WARNING) = upperLimitWarning;
+        //     this->operator[](LOW_LIMIT_WARNING) = lowerLimitWarning;
+        //     this->operator[](LOW_LIMIT_BREACH) = outsideLimitMsg;
+        //   };
+        //   ~PrintMap(){};
+        // };
+
+        // PrintMap print_book;
+        // std::cout << size_t(property_state) << print_book[size_t(property_state)] << std::endl;
+        std::cout << this->propertyName << " = " << this->testVariable << print_book[property_state] << this->propertyName <<"!\n";
+
+        // if(property_state == HIGH_LIMIT_BREACH || property_state == LOW_LIMIT_BREACH) {
+        //   std::cout << this->propertyName << " = " << this->testVariable << outsideLimitMsg << "!\n";
+        //   return;
+        // }
+        // else if(property_state == HIGH_LIMIT_WARNING) {
+        //   std::cout << this->propertyName << " = " << this->testVariable << upperLimitWarning << this->propertyName << "!\n";
+        //   return;
+        // }
+        // else if(property_state == LOW_LIMIT_WARNING) {
+        //   std::cout << this->propertyName << " = " << this->testVariable  << lowerLimitWarning << this->propertyName << "!\n";
+        //   return;
+        // }
       }
+
+      // void printLimitBreachMsg() {
+      //   std::cout << this->propertyName << " = " << this->testVariable << outsideLimitMsg << "!\n";
+      // }
+
+      // void printLowLimitWarning() {
+      //   std::cout << this->propertyName << " = " << this->testVariable  << lowerLimitWarning << this->propertyName << "!\n";
+      // }
+
+
 
       state withinLimits(bool print_message) {
         T conservativeLowerLimit = lowerLimit + tolerance;
@@ -97,6 +144,7 @@ class Property {
         if(testVariable == upperLimit) --it;
         
         state possible_state;
+        // std::cout << " State id " <<state(it - boundary.cbegin()) << "xxxx";
         if(print_message) printMessage(state(it - boundary.cbegin()));
         return state(it - boundary.cbegin());
       }
