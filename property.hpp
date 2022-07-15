@@ -17,31 +17,56 @@ class Property {
     T lowerLimit;
     T tolerance;
     float tolerancePercent;
-    limit_type limitType;
+    limit_type limitType = DUAL_INSIDE;
     std::string propertyName;
 
-    Property() = delete;
+    Property();
 
-    Property(std::string fproperty_name, T ftest_variable, T fupper_limit, T flower_limit, float ftolerance, bool fsafe_inside)
-      : propertyName(fproperty_name), testVariable(ftest_variable), tolerancePercent(ftolerance),
-        upperLimit(fupper_limit), lowerLimit(flower_limit) {
-          tolerance = upperLimit * tolerancePercent/100.;
-          if(fsafe_inside) limitType = DUAL_INSIDE;
-          else limitType = DUAL_OUTSIDE;
-        }
+    Property(T ftest_variable) : testVariable(ftest_variable) {};
 
-    Property(std::string fproperty_name, T ftest_variable, T flimit, float ftolerance, bool fis_upper)
-      : propertyName(fproperty_name), testVariable(ftest_variable), tolerancePercent(ftolerance) {
-          tolerance = flimit * tolerancePercent/100.;
-          if(fis_upper) {
-            limitType = UPPER;
-            upperLimit = flimit;
-          }
-          else {
-            limitType = LOWER;
-            lowerLimit = flimit;
-          }
-        }
+    // Property(std::string fproperty_name, T ftest_variable, T fupper_limit, T flower_limit, float ftolerance, bool fsafe_inside)
+    //   : propertyName(fproperty_name), testVariable(ftest_variable), tolerancePercent(ftolerance),
+    //     upperLimit(fupper_limit), lowerLimit(flower_limit) {
+    //       tolerance = upperLimit * tolerancePercent/100.;
+    //       if(fsafe_inside) limitType = DUAL_INSIDE;
+    //       else limitType = DUAL_OUTSIDE;
+    //     }
+
+    // Property(std::string fproperty_name, T ftest_variable, T flimit, float ftolerance, bool fis_upper)
+    //   : propertyName(fproperty_name), testVariable(ftest_variable), tolerancePercent(ftolerance) {
+    //       tolerance = flimit * tolerancePercent/100.;
+    //       if(fis_upper) {
+    //         limitType = UPPER;
+    //         upperLimit = flimit;
+    //       }
+    //       else {
+    //         limitType = LOWER;
+    //         lowerLimit = flimit;
+    //       }
+    //     }
+    void isDualLimit(T flower_limit, T fupper_limit, bool fsafe_inside = true) {
+        if(!fsafe_inside) limitType = DUAL_OUTSIDE;
+        lowerLimit = flower_limit;
+        upperLimit = fupper_limit;
+      }
+
+      void isStrictUpperLimit(T fupper_limit) {
+        limitType = UPPER;
+        upperLimit = fupper_limit;
+      }
+
+      void isStrictLowerLimit(T flower_limit) {
+        limitType = LOWER;
+        lowerLimit = flower_limit;
+      }
+
+      void setPropertyName(std::string fproperty_name) {
+        propertyName = fproperty_name;
+      }
+
+      void setTolerancePercent(float ftolerance_percent) {
+        tolerancePercent = ftolerance_percent;
+      }
 
     private:
  
